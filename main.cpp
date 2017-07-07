@@ -23,7 +23,7 @@ int main(int argc, char** argv)
 			target.c_str(), target.c_str(), target.c_str(), target.c_str());
 	else
 		snprintf(search_cmd, sizeof(search_cmd), fmt[enhence], path.c_str(), options.c_str(), target.c_str());
-	cout << search_cmd << endl;
+	
 	vector<string> vec_res;
 	if (!run_cmd(vec_res, search_cmd))
 	{

@@ -18,5 +18,8 @@ $(OBJS): utils.h Window.h
 search: main.cpp $(OBJS)
 	$(CXX) -o $@ $^ $(LIBS) $(DEBUG)
 
+install:
+	
+
 clean:
 	rm -f search $(OBJS)
