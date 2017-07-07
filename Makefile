@@ -22,4 +22,4 @@ install:
 	install -m 555 se /usr/bin/se
 
 clean:
-	rm -f search $(OBJS)
+	rm -f se $(OBJS)
