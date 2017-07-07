@@ -1,4 +1,4 @@
-all: search
+all: se
 
 OBJS = utils.o Window.o
 LIBS =  -lmenu
@@ -15,11 +15,11 @@ endif
 
 $(OBJS): utils.h Window.h
 
-search: main.cpp $(OBJS)
+se: main.cpp $(OBJS)
 	$(CXX) -o $@ $^ $(LIBS) $(DEBUG)
 
 install:
-	
+	install -m 555 se /usr/bin/se
 
 clean:
 	rm -f search $(OBJS)
