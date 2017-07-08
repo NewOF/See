@@ -21,8 +21,7 @@ typedef string file_lines;
 typedef char*  m_string;
 
 string strip(string str, bool del_left);
-string& del_tab(string& str);
-string& rep_escape(string& str);
+string& deltab(string& str);
 
 bool get_filter();
 bool combining(string& options);

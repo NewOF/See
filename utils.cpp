@@ -1,6 +1,6 @@
 #include "utils.h"
 
-const char* filter_file = "/etc/search/filter.conf";
+const char* filter_file = "/etc/see/filter.conf";
 
 map<string, string> map_filter;
 
@@ -35,7 +35,7 @@ bool get_filter()
         char buff[1024 + 1];
         while (fgets(buff, sizeof(buff), fp))
         {
-			string str = strip(buff);
+            auto str = strip(buff);
             auto pos = str.find('=');
             if (str[0] != '#' && pos != string::npos)
             {
@@ -59,7 +59,7 @@ bool combining(string& options)
     {
         auto pos = string::npos;
         options += "\\( ";
-        string str = map_filter[NAME];
+        auto str = map_filter[NAME];
         while(str.length()>0)
         {
             if ((pos = str.find(';')) != string::npos)
@@ -85,7 +85,7 @@ bool combining(string& options)
         }
 		auto pos = string::npos;
         options += "\\( ";
-        string str = map_filter[NAME_IG];
+        auto str = map_filter[NAME_IG];
         while (str.length() > 0)
         {
             if ((pos = str.find(';')) != string::npos)
@@ -110,7 +110,7 @@ bool combining(string& options)
         }
 		auto pos = string::npos;
         options += "\\( ";
-        string str = map_filter[DIR_IG];
+        auto str = map_filter[DIR_IG];
         while (str.length() > 0)
         {
             if ((pos = str.find(';')) != string::npos)
@@ -135,7 +135,7 @@ bool combining(string& options)
         }
 		auto pos = string::npos;
         options += "\\(";
-        string str = map_filter[PERM];
+        auto str = map_filter[PERM];
         while (str.length() > 0)
         {
             if ((pos = str.find(';')) != string::npos)
@@ -236,8 +236,8 @@ bool run_cmd(vector<string>& vec_res, char* cmd)
 		char res_buff[1024];
 		while (fgets(res_buff, sizeof(res_buff), fp))
 		{
-			string str = strip(res_buff, false);
-			vec_res.push_back(del_tab(str));
+			auto str = strip(res_buff, false);
+			vec_res.push_back(deltab(str));
 		}
 		pclose(fp);
 		return true;
@@ -257,28 +257,18 @@ void usage()
 pair<file_name, file_lines> get_file_lines(string str)
 {
 	auto pos = str.find(':');
-	file_name name = str.substr(0, pos);
-	file_lines lines = str.substr(pos + 1, str.find(':', pos + 1) - pos -1);
+    auto name = str.substr(0, pos);
+    auto lines = str.substr(pos + 1, str.find(':', pos + 1) - pos -1);
 	return make_pair(name, lines);
 }
 
-string& del_tab(string& str)
+string& deltab(string& str)
 {
 	auto pos = string::npos;
 	while ((pos = str.find('\t')) != string::npos)
 	{
 		str.erase(pos, 1);
 		str.insert(pos, 4, ' ');
-	}
-	return str;
-}
-
-string& rep_escape(string& str)
-{
-	auto pos = string::npos;
-	while ((pos = str.find('%')) != string::npos)
-	{
-		str.insert(pos, 4, '\\');
 	}
 	return str;
 }
