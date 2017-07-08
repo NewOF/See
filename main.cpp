@@ -1,5 +1,11 @@
 #include "Window.h"
 
+const char* fmt[2] =
+{
+	"find %s -type f %s|xargs grep -nE '([^[:alnum:]_]%s[^[:alnum:]_]|^%s$|[^[:alnum:]_]%s$|^%s[^[:alnum:]_])'",
+	"find %s -type f %s|xargs grep -n %s"
+};
+
 int main(int argc, char** argv) 
 {
 	string target;
@@ -32,16 +38,12 @@ int main(int argc, char** argv)
 	if (vec_res.size() > 0)
 	{
 		CreateMenu(vec_res);
-		int index = -1;
-		Waiting(vec_res.size(), index);
+		int index = Waiting(vec_res);
 		CloseMenu();
 		if (index != -1)
 		{
-			string str = vec_res[index];
-			string::size_type pos = str.find(':');
-			string cmd = "vim " + str.substr(0, pos);
-			cmd += " +" + str.substr(pos + 1, str.find(':', pos + 1) - pos);
-			system(cmd.c_str());
+			pair<string,string> pair = get_file_lines(vec_res[index]);
+			system(string("vim " + pair.first + " +" + pair.second).c_str());;
 		}
 	}
 	

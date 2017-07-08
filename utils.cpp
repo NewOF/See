@@ -1,18 +1,23 @@
 #include "utils.h"
 
-string strip(string str)
+const char* filter_file = "/etc/search/filter.conf";
+
+map<string, string> map_filter;
+
+string strip(string str, bool del_left = true)
 {
 	if (str.length() > 0)
 	{
-		while (*str.begin() == ' '||*str.begin() == '\n'||*str.begin() == '\r')
+		while (del_left && 
+			(*str.begin() == ' ' || *str.begin() == '\n' || *str.begin() == '\r' || *str.rbegin() == '\t'))
 		{
 			str.erase(0, 1);
 		}
-		while (*str.rbegin() == ' ' || *str.rbegin() == '\n' || *str.rbegin() == '\r')
+		while (*str.rbegin() == ' ' || *str.rbegin() == '\n' || *str.rbegin() == '\r' || *str.rbegin() == '\t')
 		{
 			str.erase(str.length() - 1);
 		}
-    }
+	}
     return str;
 }
 
@@ -31,7 +36,7 @@ bool get_filter()
         while (fgets(buff, sizeof(buff), fp))
         {
 			string str = strip(buff);
-            string::size_type pos = str.find('=');
+            auto pos = str.find('=');
             if (str[0] != '#' && pos != string::npos)
             {
                 string val = strip(str.substr(pos + 1));
@@ -52,7 +57,7 @@ bool combining(string& options)
     bool key = false;
     if (map_filter.count(NAME))
     {
-        string::size_type pos;
+        auto pos = string::npos;
         options += "\\( ";
         string str = map_filter[NAME];
         while(str.length()>0)
@@ -78,7 +83,7 @@ bool combining(string& options)
         {
             options += " -a ";
         }
-        string::size_type pos;
+		auto pos = string::npos;
         options += "\\( ";
         string str = map_filter[NAME_IG];
         while (str.length() > 0)
@@ -103,7 +108,7 @@ bool combining(string& options)
         {
             options += " -a ";
         }
-        string::size_type pos;
+		auto pos = string::npos;
         options += "\\( ";
         string str = map_filter[DIR_IG];
         while (str.length() > 0)
@@ -128,7 +133,7 @@ bool combining(string& options)
         {
             options += " -a ";
         }
-        string::size_type pos;
+		auto pos = string::npos;
         options += "\\(";
         string str = map_filter[PERM];
         while (str.length() > 0)
@@ -155,6 +160,7 @@ bool get_arg(int& argc, char** argv, string& target, string& path, int& enhence)
 {
 	if (argc == 1 || argc > 4)
 	{
+		usage();
 		return false;
 	}
 	
@@ -216,6 +222,7 @@ bool get_arg(int& argc, char** argv, string& target, string& path, int& enhence)
 		}
 		break;
 	default:
+		usage();
 		return false;
 	}
 	return true;
@@ -229,18 +236,8 @@ bool run_cmd(vector<string>& vec_res, char* cmd)
 		char res_buff[1024];
 		while (fgets(res_buff, sizeof(res_buff), fp))
 		{
-			string str = res_buff;
-			while (*str.rbegin() == '\r' || *str.rbegin() == '\n')
-			{
-				*str.rbegin() = '\0';
-			}
-			string::size_type pos;
-			while ((pos = str.find('\t')) != string::npos)
-			{
-				str.erase(pos, 1);
-				str.insert(pos, 4, ' ');
-			}
-			vec_res.push_back(str);
+			string str = strip(res_buff, false);
+			vec_res.push_back(del_tab(str));
 		}
 		pclose(fp);
 		return true;
@@ -255,4 +252,33 @@ void usage()
 {
 	cout << "Usage: search [path] [-E] <target>" << endl;
 	cout << "   -E: Enhancement mode, it may be in command anywhere." << endl;
+}
+
+pair<file_name, file_lines> get_file_lines(string str)
+{
+	auto pos = str.find(':');
+	file_name name = str.substr(0, pos);
+	file_lines lines = str.substr(pos + 1, str.find(':', pos + 1) - pos -1);
+	return make_pair(name, lines);
+}
+
+string& del_tab(string& str)
+{
+	auto pos = string::npos;
+	while ((pos = str.find('\t')) != string::npos)
+	{
+		str.erase(pos, 1);
+		str.insert(pos, 4, ' ');
+	}
+	return str;
+}
+
+string& rep_escape(string& str)
+{
+	auto pos = string::npos;
+	while ((pos = str.find('%')) != string::npos)
+	{
+		str.insert(pos, 4, '\\');
+	}
+	return str;
 }

@@ -1,25 +1,28 @@
-all: se
+all: see
 
 OBJS = utils.o Window.o
 LIBS =  -lmenu
 DEBUG = -g -Wall
-CXXFLAGS = -std=c++11
+
 
 ifeq ($(shell uname), Linux)
 LIBS += -lcurses
+CXXFLAGS = -std=c++11
 else
 LIBS +=  -lncurses
-utils.o: utils.cpp
-	$(CXX) -c $< -o $@ $(DEBUG)
+CXXFLAGS = -std=gnu++11
 endif
 
-$(OBJS): utils.h Window.h
+%.o: %.cpp
+	$(CXX) -c $(CXXFLAGS) $(DEBUG) $< -o $@
 
-se: main.cpp $(OBJS)
-	$(CXX) -o $@ $^ $(LIBS) $(DEBUG)
+see: main.cpp $(OBJS)
+	$(CXX) -o $@ $^ $(LIBS) $(DEBUG) $(CXXFLAGS)
 
 install:
+	install -d /etc/search
+	install -m 666 filter.conf /etc/search
 	install -m 555 se /usr/bin/se
 
 clean:
-	rm -f se $(OBJS)
+	rm -f see $(OBJS)

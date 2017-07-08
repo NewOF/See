@@ -10,10 +10,17 @@
 #define  _KEY_ENTER 0012
 #define  _KEY_ESC	0033
 #define  _KEY_QUIT	0161
-static ITEM** m_items;
-static MENU* m_menu;
 
+#define _DISPLAY_TOP 17
+
+#define _COL_MAGENTA	1
+#define _COL_WHITE		2 
+#define _COL_RED		3
+#define _COL_GREEN		4
+ 
 
 void CreateMenu(const vector<string>& option);
-void Waiting(const int size, int& index);
+int Waiting(const vector<string>& vec_res);
 void CloseMenu();
+void Print(pair<file_name, file_lines> name_line);
+void Clear();
