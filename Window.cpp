@@ -95,7 +95,7 @@ void Print(pair<file_name, file_lines> name_line)
     init_pair(_COL_GREEN, COLOR_GREEN, COLOR_BLACK);
     char buf[1024];
     int index = _DISPLAY_TOP;
-    int width = log10(end) + 1;
+    unsigned int width = log10(end) + 1;
     int curpos = begin;
     while (fgets(buf, sizeof(buf), fp))
     {

@@ -2,7 +2,6 @@
 #include "utils.h"
 #include <menu.h>
 #include <ncurses.h>
-#include <event.h>
 
 #define  _KEY_ENTER     0012
 #define  _KEY_ESC	    0033
